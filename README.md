@@ -59,6 +59,7 @@ A real-time iBeacon scanner with a web-based user interface that detects and dis
 - `public/script.js` - Client-side JavaScript for real-time updates
 - `.env` - Configuration file for gateway name
 - `package.json` - Project dependencies and scripts
+- `logs/` - Directory containing beacon data organized by date
 
 ## How It Works
 

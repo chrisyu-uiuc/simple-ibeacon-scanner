@@ -1,0 +1,16 @@
+[Unit]
+Description=iBeacon Scanner Service
+After=network.target bluetooth.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/beacon-scanner
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+EnvironmentFile=/home/pi/beacon-scanner/.env
+
+[Install]
+WantedBy=multi-user.target

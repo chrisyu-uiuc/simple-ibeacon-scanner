@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+
+# Optional npm cache
+.npm
+
+# Mac files
+.DS_Store
+
+# Data files
+*.csv
+
+# Date-named directories (for data logs)
+202[0-9]-[0-9][0-9]-[0-9][0-9]/
+
+# IDE files
+.vscode/
+.idea/

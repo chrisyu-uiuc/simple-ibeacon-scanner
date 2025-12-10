@@ -29,8 +29,14 @@ let beaconHistory = [];
 const MAX_HISTORY = 50; // Keep only the last 50 beacons
 
 const createFolderIfNotExist = () => {
+  const logsDir = path.join(__dirname, 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+    log(`Created logs directory: ${logsDir}`);
+  }
+
   const today = new Date().toISOString().split('T')[0];
-  const folderPath = path.join(__dirname, today);
+  const folderPath = path.join(logsDir, today);
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath);
     log(`Created folder: ${folderPath}`);

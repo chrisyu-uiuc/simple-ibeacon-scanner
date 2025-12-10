@@ -16,6 +16,16 @@ function formatTime(date) {
 
 // Update closest beacon display
 socket.on('closestBeacon', (beacon) => {
+    if (beacon === null) {
+        // Clear the display when no closest beacon
+        beaconUuidEl.textContent = 'No beacon detected';
+        beaconMajorEl.textContent = '--';
+        beaconMinorEl.textContent = '--';
+        beaconRssiEl.textContent = '--';
+        beaconLastSeenEl.textContent = '--';
+        return;
+    }
+
     beaconUuidEl.textContent = beacon.uuid;
     beaconMajorEl.textContent = beacon.major;
     beaconMinorEl.textContent = beacon.minor;

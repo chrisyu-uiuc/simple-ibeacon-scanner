@@ -56,6 +56,13 @@ const writeCSV = (data) => {
 
 // Track the closest beacon
 let closestBeacon = null;
+let closestBeaconTimeout = null;
+
+// Function to clear the closest beacon display
+const clearClosestBeacon = () => {
+  closestBeacon = null;
+  io.emit('closestBeacon', null);
+};
 
 scanner.onadvertisement = (ad) => {
   if (ad.beaconType === 'iBeacon') {
@@ -73,8 +80,22 @@ scanner.onadvertisement = (ad) => {
       rssi: ad.rssi
     };
 
-    // Update closest beacon if this one is stronger
-    if (!closestBeacon || ad.rssi > closestBeacon.rssi) {
+    // Check if this beacon should become the new closest beacon
+    // It should if:
+    // 1. There's no current closest beacon
+    // 2. This beacon has a significantly stronger signal (higher RSSI)
+    // 3. This is the same beacon as the current closest beacon
+    const isSameBeacon = closestBeacon &&
+      ad.iBeacon.uuid === closestBeacon.uuid &&
+      ad.iBeacon.major === closestBeacon.major &&
+      ad.iBeacon.minor === closestBeacon.minor;
+
+    const shouldUpdateClosest = !closestBeacon ||
+      ad.rssi > closestBeacon.rssi + 2 || // Significantly stronger (more than 2dB)
+      isSameBeacon; // Same beacon (allow updates even if slightly weaker)
+
+    if (shouldUpdateClosest) {
+      // Update closest beacon
       closestBeacon = {
         uuid: ad.iBeacon.uuid,
         major: ad.iBeacon.major,
@@ -82,8 +103,25 @@ scanner.onadvertisement = (ad) => {
         rssi: ad.rssi,
         lastSeen: new Date()
       };
+
       // Emit closest beacon to clients
       io.emit('closestBeacon', closestBeacon);
+
+      // Clear any existing timeout
+      if (closestBeaconTimeout) {
+        clearTimeout(closestBeaconTimeout);
+      }
+
+      // Set a new timeout to clear the closest beacon after 10 seconds
+      // Only for the currently tracked beacon
+      closestBeaconTimeout = setTimeout(clearClosestBeacon, 10000);
+    } else if (!isSameBeacon) {
+      // Different beacon with weaker signal
+      // Just reset the timer to extend the window for the current closest beacon
+      if (closestBeaconTimeout) {
+        clearTimeout(closestBeaconTimeout);
+        closestBeaconTimeout = setTimeout(clearClosestBeacon, 10000);
+      }
     }
 
     // Create a unique identifier for deduplication

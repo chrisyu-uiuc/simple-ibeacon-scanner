@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iBeacon Scanner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>iBeacon Scanner</h1>
+            <div class="status-indicator">
+                <span class="indicator-dot"></span>
+                <span class="status-text">Scanning...</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="closest-beacon-section">
+                <h2>Closest Beacon</h2>
+                <div class="radar-animation">
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle delayed"></div>
+                    <div class="radar-circle more-delayed"></div>
+                    <div class="beacon-icon">📡</div>
+                </div>
+                <div class="beacon-info">
+                    <div class="info-item">
+                        <label>UUID:</label>
+                        <span id="beacon-uuid">Searching...</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Major:</label>
+                        <span id="beacon-major">--</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Minor:</label>
+                        <span id="beacon-minor">--</span>
+                    </div>
+                    <div class="info-item">
+                        <label>RSSI:</label>
+                        <span id="beacon-rssi">--</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Last Seen:</label>
+                        <span id="beacon-lastseen">--</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="history-section">
+                <h2>Recent Beacons</h2>
+                <div class="history-container">
+                    <table id="history-table">
+                        <thead>
+                            <tr>
+                                <th>UUID</th>
+                                <th>Major</th>
+                                <th>Minor</th>
+                                <th>RSSI</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <!-- History items will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

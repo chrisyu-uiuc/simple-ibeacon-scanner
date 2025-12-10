@@ -69,7 +69,9 @@ A real-time iBeacon scanner with a web-based user interface that detects and dis
 
 ## Data Logging
 
-The application automatically creates daily folders (named by date) and saves beacon data to CSV files:
+The application automatically creates a `logs` directory and organizes beacon data by date:
+- Daily folders are created inside the `logs` directory (named by date)
+- Beacon data is saved to CSV files within each date folder
 - Filename format: `{GATEWAY_NAME}_ibeacons.csv`
 - Columns: GatewayName, Timestamp, UUID, Major, Minor, RSSI
 

@@ -10,9 +10,12 @@
     <div class="container">
         <header>
             <h1>iBeacon Scanner</h1>
-            <div class="status-indicator">
-                <span class="indicator-dot"></span>
-                <span class="status-text">Scanning...</span>
+            <div class="header-controls">
+                <div class="status-indicator">
+                    <span class="indicator-dot"></span>
+                    <span class="status-text">Scanning...</span>
+                </div>
+                <button id="refresh-btn" class="refresh-button">Refresh</button>
             </div>
         </header>
 
@@ -39,6 +42,10 @@
                         <span id="beacon-minor">--</span>
                     </div>
                     <div class="info-item">
+                        <label>Device ID:</label>
+                        <span id="beacon-address">--</span>
+                    </div>
+                    <div class="info-item">
                         <label>RSSI:</label>
                         <span id="beacon-rssi">--</span>
                     </div>
@@ -58,6 +65,7 @@
                                 <th>UUID</th>
                                 <th>Major</th>
                                 <th>Minor</th>
+                                <th>MAC Address</th>
                                 <th>RSSI</th>
                                 <th>Time</th>
                             </tr>

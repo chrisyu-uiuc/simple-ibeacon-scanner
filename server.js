@@ -47,9 +47,9 @@ const createFolderIfNotExist = () => {
 const writeCSV = (data) => {
   const folderPath = createFolderIfNotExist();
   const filePath = path.join(folderPath, `${gatewayName}_ibeacons.csv`);
-  const csvData = `${gatewayName},${data.timestamp},${data.uuid},${data.major},${data.minor},${data.rssi}\n`;
+  const csvData = `${gatewayName},${data.timestamp},${data.uuid},${data.major},${data.minor},${data.rssi},${data.address}\n`;
   if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, 'GatewayName,Timestamp,UUID,Major,Minor,RSSI\n');
+    fs.writeFileSync(filePath, 'GatewayName,Timestamp,UUID,Major,Minor,RSSI,MAC Address\n');
   }
   fs.appendFileSync(filePath, csvData);
 };
@@ -77,7 +77,8 @@ scanner.onadvertisement = (ad) => {
       uuid: ad.iBeacon.uuid,
       major: ad.iBeacon.major,
       minor: ad.iBeacon.minor,
-      rssi: ad.rssi
+      rssi: ad.rssi,
+      address: ad.address || 'Unknown'
     };
 
     // Check if this beacon should become the new closest beacon
@@ -101,6 +102,7 @@ scanner.onadvertisement = (ad) => {
         major: ad.iBeacon.major,
         minor: ad.iBeacon.minor,
         rssi: ad.rssi,
+        address: ad.address || 'Unknown',
         lastSeen: new Date()
       };
 
@@ -139,6 +141,7 @@ scanner.onadvertisement = (ad) => {
       major: ad.iBeacon.major,
       minor: ad.iBeacon.minor,
       rssi: ad.rssi,
+      address: ad.address || 'Unknown',
       timestamp: new Date()
     };
 
@@ -195,7 +198,20 @@ io.on('connection', (socket) => {
     socket.emit('closestBeacon', closestBeacon);
   }
   socket.emit('beaconHistory', beaconHistory);
-  
+
+  socket.on('refreshRequested', () => {
+    log('Refresh requested by client');
+    // Clear the beacon history
+    beaconHistory = [];
+
+    // Clear the closest beacon
+    clearClosestBeacon();
+
+    // Notify all clients about the cleared data
+    io.emit('beaconHistory', beaconHistory);
+    io.emit('closestBeacon', null);
+  });
+
   socket.on('disconnect', () => {
     log('User disconnected');
   });

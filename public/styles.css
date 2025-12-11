@@ -27,11 +27,38 @@ header {
     margin-bottom: 30px;
 }
 
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 header h1 {
     font-size: 2.5rem;
     background: linear-gradient(to right, #00c9ff, #92fe9d);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.refresh-button {
+    background: linear-gradient(to right, #00c9ff, #00ff95);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 201, 255, 0.3);
+}
+
+.refresh-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 201, 255, 0.5);
+}
+
+.refresh-button:active {
+    transform: translateY(0);
 }
 
 .status-indicator {
@@ -191,16 +218,9 @@ main {
 }
 
 #history-table td {
-    padding: 12px 15px;
+    padding: 10px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-#history-table tr:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-#history-table td {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .no-data {

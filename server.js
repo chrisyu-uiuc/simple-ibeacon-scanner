@@ -47,9 +47,9 @@ const createFolderIfNotExist = () => {
 const writeCSV = (data) => {
   const folderPath = createFolderIfNotExist();
   const filePath = path.join(folderPath, `${gatewayName}_ibeacons.csv`);
-  const csvData = `${gatewayName},${data.timestamp},${data.uuid},${data.major},${data.minor},${data.rssi},${data.address}\n`;
+  const csvData = `${gatewayName},${data.timestamp},${data.address},${data.major},${data.minor},${data.rssi}\n`;
   if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, 'GatewayName,Timestamp,UUID,Major,Minor,RSSI,MAC Address\n');
+    fs.writeFileSync(filePath, 'GatewayName,Timestamp,MAC Address,Major,Minor,RSSI\n');
   }
   fs.appendFileSync(filePath, csvData);
 };
@@ -67,18 +67,17 @@ const clearClosestBeacon = () => {
 scanner.onadvertisement = (ad) => {
   if (ad.beaconType === 'iBeacon') {
     log(`Discovered iBeacon: ${ad.address || 'Unknown'}`);
-    log(`  UUID: ${ad.iBeacon.uuid}`);
+    log(`  MAC Address: ${ad.address || 'Unknown'}`);
     log(`  Major: ${ad.iBeacon.major}`);
     log(`  Minor: ${ad.iBeacon.minor}`);
     log(`  RSSI: ${ad.rssi}`);
 
     const data = {
       timestamp: new Date().toISOString().replace('T', ' ').replace('Z', ''),
-      uuid: ad.iBeacon.uuid,
+      address: ad.address || 'Unknown',
       major: ad.iBeacon.major,
       minor: ad.iBeacon.minor,
-      rssi: ad.rssi,
-      address: ad.address || 'Unknown'
+      rssi: ad.rssi
     };
 
     // Check if this beacon should become the new closest beacon
@@ -86,10 +85,7 @@ scanner.onadvertisement = (ad) => {
     // 1. There's no current closest beacon
     // 2. This beacon has a significantly stronger signal (higher RSSI)
     // 3. This is the same beacon as the current closest beacon
-    const isSameBeacon = closestBeacon &&
-      ad.iBeacon.uuid === closestBeacon.uuid &&
-      ad.iBeacon.major === closestBeacon.major &&
-      ad.iBeacon.minor === closestBeacon.minor;
+    const isSameBeacon = closestBeacon && ad.address === closestBeacon.address;
 
     const shouldUpdateClosest = !closestBeacon ||
       ad.rssi > closestBeacon.rssi + 2 || // Significantly stronger (more than 2dB)
@@ -98,11 +94,10 @@ scanner.onadvertisement = (ad) => {
     if (shouldUpdateClosest) {
       // Update closest beacon
       closestBeacon = {
-        uuid: ad.iBeacon.uuid,
+        address: ad.address || 'Unknown',
         major: ad.iBeacon.major,
         minor: ad.iBeacon.minor,
         rssi: ad.rssi,
-        address: ad.address || 'Unknown',
         lastSeen: new Date()
       };
 
@@ -126,22 +121,16 @@ scanner.onadvertisement = (ad) => {
       }
     }
 
-    // Create a unique identifier for deduplication
-    const uniqueId = `${ad.iBeacon.uuid}-${ad.iBeacon.major}-${ad.iBeacon.minor}`;
-
     // Check if this beacon is already in history
     const existingIndex = beaconHistory.findIndex(item =>
-      item.uuid === ad.iBeacon.uuid &&
-      item.major === ad.iBeacon.major &&
-      item.minor === ad.iBeacon.minor
+      item.address === ad.address
     );
 
     const beaconEntry = {
-      uuid: ad.iBeacon.uuid,
+      address: ad.address || 'Unknown',
       major: ad.iBeacon.major,
       minor: ad.iBeacon.minor,
       rssi: ad.rssi,
-      address: ad.address || 'Unknown',
       timestamp: new Date()
     };
 

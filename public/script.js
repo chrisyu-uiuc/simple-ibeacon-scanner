@@ -5,7 +5,6 @@ const socket = io();
 const beaconUuidEl = document.getElementById('beacon-uuid');
 const beaconMajorEl = document.getElementById('beacon-major');
 const beaconMinorEl = document.getElementById('beacon-minor');
-const beaconAddressEl = document.getElementById('beacon-address');
 const beaconRssiEl = document.getElementById('beacon-rssi');
 const beaconLastSeenEl = document.getElementById('beacon-lastseen');
 const historyBodyEl = document.getElementById('history-body');
@@ -23,16 +22,14 @@ socket.on('closestBeacon', (beacon) => {
         beaconUuidEl.textContent = 'No beacon detected';
         beaconMajorEl.textContent = '--';
         beaconMinorEl.textContent = '--';
-        beaconAddressEl.textContent = '--';
         beaconRssiEl.textContent = '--';
         beaconLastSeenEl.textContent = '--';
         return;
     }
 
-    beaconUuidEl.textContent = beacon.uuid;
+    beaconUuidEl.textContent = beacon.address;
     beaconMajorEl.textContent = beacon.major;
     beaconMinorEl.textContent = beacon.minor;
-    beaconAddressEl.textContent = beacon.address;
     beaconRssiEl.textContent = beacon.rssi;
     beaconLastSeenEl.textContent = formatTime(new Date(beacon.lastSeen));
 });
@@ -43,7 +40,7 @@ socket.on('beaconHistory', (history) => {
 
     if (history.length === 0) {
         const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="7" class="no-data">No beacons detected yet</td>';
+        row.innerHTML = '<td colspan="6" class="no-data">No beacons detected yet</td>';
         historyBodyEl.appendChild(row);
         return;
     }
@@ -57,10 +54,9 @@ socket.on('beaconHistory', (history) => {
         }
 
         row.innerHTML = `
-            <td>${beacon.uuid}</td>
+            <td>${beacon.address}</td>
             <td>${beacon.major}</td>
             <td>${beacon.minor}</td>
-            <td>${beacon.address}</td>
             <td>${beacon.rssi}</td>
             <td>${formatTime(new Date(beacon.timestamp))}</td>
         `;
@@ -86,14 +82,13 @@ refreshBtn.addEventListener('click', () => {
     // Clear the displayed beacon history
     historyBodyEl.innerHTML = '';
     const row = document.createElement('tr');
-    row.innerHTML = '<td colspan="7" class="no-data">No beacons detected yet</td>';
+    row.innerHTML = '<td colspan="6" class="no-data">No beacons detected yet</td>';
     historyBodyEl.appendChild(row);
 
     // Clear the closest beacon display
     beaconUuidEl.textContent = 'Searching...';
     beaconMajorEl.textContent = '--';
     beaconMinorEl.textContent = '--';
-    beaconAddressEl.textContent = '--';
     beaconRssiEl.textContent = '--';
     beaconLastSeenEl.textContent = '--';
 
